@@ -8,9 +8,9 @@
 
 
 unsigned long interval15sec=15000; // the time we need to wait BEFORE the Aircon is turned Off after the Desired Temp is Achieved.
-unsigned long interval5min=300000; // the time we need to wait
-unsigned long interval10sec=10000; // the time we need to wait
-unsigned long interval10secs=10000; // the time we need to wait before first start of AirCON
+unsigned long interval5min=300000; // the time we need to wait before restarting the compressor.
+unsigned long interval10sec=10000; // the time we need to wait before each temperature reading.
+unsigned long interval10secs=10000; // the time we need to wait before first start of Arduino/AirCON.
 
 unsigned long time_15sec = 0; // millis() returns an unsigned long.
 unsigned long time_5min = 0; // millis() returns an unsigned long.
@@ -48,11 +48,11 @@ volatile boolean ButtonPressed = false;
 
 int relayState = digitalRead(Relay1_IN1);
 float firstemperature;  //We capture the room temperature here just once, at the start of the Arduino being powered up.
-float roomtemperature;  //We capture the room temperature here.
+float roomtemperature;  //We capture the realtime room temperature here.
 //float inoperationroomtemperature;  // the temperature of the room after sometime of the system being in operation ( in the void loop() )
 float requiredtemp;  // this is the required target temperature where the aircondioner will be switched off.
 float hyteresistemp; // the gap in degrees Celsius, between the starting higher (roomtemperature) and the lower (requiredtemp).
-int firstime = 1;
+int firstime = 1; // used to execute the AirCon start loop just once.
 
 
 // the setup routine runs only once whenever you give power to the arduino.
@@ -70,9 +70,8 @@ void setup()
 
 void loop(){
   unsigned long currentMillis = millis(); // grab current time. 
- 
   
- if ((unsigned long)(currentMillis - time_10sec) >= interval10sec) // 10 seconds wait in this Loop. 
+ if ((unsigned long)(currentMillis - time_10sec) >= interval10sec) // 10 seconds wait in this Loop before next temperature read cycle. 
  { 
     // unsigned long currentMillis = millis(); // grab current time.
   
@@ -87,7 +86,7 @@ void loop(){
     Serial.println("°C is the Cutoff temperature. ");
     //time_10sec = millis();
     print_time(time_10sec);
-    Serial.println("I happen every 10 Seconds!");
+    Serial.println("Reading happens every 10 Seconds!");
     Serial.println("               ");
     Serial.println("               ");
     
@@ -150,7 +149,7 @@ void loop(){
            //delay(10000);  // Only happens ONE TIME when arduino starts.
             digitalWrite(Relay1_IN1, RELAY_ON); //Activate air conditioner by Turning the Relay_1_IN1 ON by giving it value of 0 as RELAY_ON 0 has been defined earlier.
             relayState = digitalRead(Relay1_IN1);
-            firstime = 2;
+            firstime = 2;  // we increment this variable to 2 so that this loop does not execute again.
                  
         }
    
@@ -175,7 +174,7 @@ void loop(){
   //relayState = digitalRead(Relay1_IN1);  
   if ((unsigned long)(currentMillis - time_15sec) >= interval15sec)
   {   float t = dht.readTemperature();
-      roomtemperature = t;   // Check the room temperature every 30 seconds
+      roomtemperature = t;   // Check the room temperature every 15 seconds
          
       if ((roomtemperature < requiredtemp) && (relayState == 0)) //if temperature is under the required temperature & relay state is ON
       {   
@@ -194,7 +193,7 @@ void loop(){
        // save the "current" time
        time_15sec = millis();
        //print_time(time_15sec);
-       time_5min = millis(); // here we reset the 4 minutes counter to be used freshened up in the HOT Cycle.
+       time_5min = millis(); // here we reset & freshen up the 5 minutes counter for the HOT Cycle,so we get an accurate 5 minute gap before switching ON the compressor.
       
     }
        
