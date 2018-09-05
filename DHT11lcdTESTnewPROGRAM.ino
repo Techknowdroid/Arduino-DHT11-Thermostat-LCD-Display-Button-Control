@@ -1,6 +1,6 @@
 // CLIMATE CONTROL for AirConditioners.
 // Original Written by ladyada, public domain.
-// MODIFIED BY Techknowdroid on 3.September.2018 (Program to get value from DHT11 on startup and use this value as the base temperature to be maintained.
+// MODIFIED BY Techknowdroid on 5.September.2018 (Program to get value from DHT11 on startup and use this value as the base temperature to be maintained.
 // Button introduced by Techknowdroid to change the Cut-OFF temperature.(User preferred Cut-OFF temperature).
 // Millis() used to time the cutoff and the compressor start cycles.
 
@@ -16,8 +16,9 @@ unsigned long time_15sec = 0; // millis() returns an unsigned long.
 unsigned long time_5min = 0; // millis() returns an unsigned long.
 unsigned long time_10sec = 0; // millis() returns an unsigned long.
 unsigned long time_10secs = 0; // millis() returns an unsigned long for the time we need to wait before first start of AirCON
+unsigned long secs = 0; // millis() returns an unsigned long for the time we need to wait before first start of AirCON
 
-void print_time(unsigned long time_millis);
+void print_time(unsigned long time_millis);  // function declaration.
 
 // include the LCD library code  We’re using the library by Marco Schwartz.
 #include <Wire.h> 
@@ -91,20 +92,20 @@ void loop(){
     Serial.println("               ");
     
     
-    
+    //////    LCD     ///////////////////////////////////////
     //LCD starts to display the temperature.
     lcd.backlight(); //open the backlight 
     lcd.setCursor(0,0); // set the cursor to column 1, line 0
-    lcd.print("Room Temp");
-    lcd.setCursor(10,0); // set the cursor to column 12, line 0 
+    lcd.print("Is");
+    lcd.setCursor(3,0); // set the cursor to column 12, line 0 
     lcd.print(int(roomtemperature));
     //lcd.setCursor(12,0); // set the cursor to column 12, line 0
     lcd.print("\337"); //The degree symbol is \337
     lcd.print("C");
 
-    lcd.setCursor(0,1); // set the cursor to column 1, line 1
-    lcd.print("CutOFF is");
-    lcd.setCursor(10,1); // set the cursor to column 10, line 1
+    lcd.setCursor(8,0); // set the cursor to column 1, line 1
+    lcd.print("Cut");
+    lcd.setCursor(12,0); // set the cursor to column 10, line 1
     lcd.print(int(requiredtemp));
     //lcd.setCursor(12,1); // set the cursor to column 12, line 1
     lcd.print("\337"); // The degree symbol is \337
@@ -228,16 +229,17 @@ void PressUPButton()
 }
 
 
-void print_time(unsigned long time_millis){
+void print_time(unsigned long time_millis)
+{
     Serial.print("Time: ");
     Serial.print(time_millis/1000);
     Serial.print("s - ");
+    
+    lcd.setCursor(0,1); // set the cursor to column 1, line 0
+    lcd.print("Time:");
+    lcd.setCursor(7,1); // set the cursor to column 12, line 0 
+    lcd.print(time_millis/1000);
+    lcd.print("s");
+    
 }
-
-
-
-
-
-
-
 
