@@ -10,13 +10,15 @@
 unsigned long interval15sec=15000; // the time we need to wait BEFORE the Aircon is turned Off after the Desired Temp is Achieved.
 unsigned long interval5min=300000; // the time we need to wait before restarting the compressor.
 unsigned long interval10sec=10000; // the time we need to wait before each temperature reading.
-unsigned long interval10secs=10000; // the time we need to wait before first start of Arduino/AirCON.
+unsigned long interval10secs=5000; // the time we need to wait before first start of Arduino/AirCON.
 
 unsigned long time_15sec = 0; // millis() returns an unsigned long.
 unsigned long time_5min = 0; // millis() returns an unsigned long.
 unsigned long time_10sec = 0; // millis() returns an unsigned long.
 unsigned long time_10secs = 0; // millis() returns an unsigned long for the time we need to wait before first start of AirCON
 unsigned long secs = 0; // millis() returns an unsigned long for the time we need to wait before first start of AirCON
+unsigned long countdown=0; // countdown variable for the print_time function.
+
 
 void print_time(unsigned long time_millis);  // function declaration.
 
@@ -87,30 +89,48 @@ void loop(){
     Serial.println("°C is the Cutoff temperature. ");
     //time_10sec = millis();
     print_time(time_10sec);
+    countdown=countdown+10;
     Serial.println("Reading happens every 10 Seconds!");
     Serial.println("               ");
     Serial.println("               ");
     
     
-    //////    LCD     ///////////////////////////////////////
+    //////    LCD    LCD   LCD   LCD    ///////////////////////////////////////
     //LCD starts to display the temperature.
-    lcd.backlight(); //open the backlight 
-    lcd.setCursor(0,0); // set the cursor to column 1, line 0
-    lcd.print("Is");
-    lcd.setCursor(3,0); // set the cursor to column 12, line 0 
-    lcd.print(int(roomtemperature));
-    //lcd.setCursor(12,0); // set the cursor to column 12, line 0
-    lcd.print("\337"); //The degree symbol is \337
-    lcd.print("C");
+    relayState = digitalRead(Relay1_IN1);  // Get the relay state here... is relay ON or OFF ? Value of 1 means OFF. Value of 0 means ON.
+    if(relayState == 0) // if compressor is ON then display the following:
+    {
+     lcd.backlight(); //open the backlight 
+     lcd.setCursor(0,0); // set the cursor to column 1, line 0
+     //lcd.print("Is");
+     lcd.setCursor(0,0); // set the cursor to column 0, line 0 
+     lcd.print(int(roomtemperature));
+     lcd.print("\337"); //The degree symbol is \337
+     lcd.print("C");
+     lcd.setCursor(5,0); // set the cursor to column 5, line 1
+     lcd.print("OFF at");
+     lcd.setCursor(12,0); // set the cursor to column 12, line 1
+     lcd.print(int(requiredtemp));
+     lcd.print("\337"); // The degree symbol is \337
+     lcd.print("C ");
+    }
 
-    lcd.setCursor(8,0); // set the cursor to column 1, line 1
-    lcd.print("Cut");
-    lcd.setCursor(12,0); // set the cursor to column 10, line 1
-    lcd.print(int(requiredtemp));
-    //lcd.setCursor(12,1); // set the cursor to column 12, line 1
-    lcd.print("\337"); // The degree symbol is \337
-    lcd.print("C");
-  
+    if(relayState == 1) // if compressor is OFF then display the following:
+    {
+     lcd.backlight(); //open the backlight 
+     lcd.setCursor(0,0); // set the cursor to column 0, line 0
+     //lcd.print("Is");
+     lcd.setCursor(0,0); // set the cursor to column 0, line 0 
+     lcd.print(int(roomtemperature));
+     lcd.print("\337"); //The degree symbol is \337
+     lcd.print("C");
+     lcd.setCursor(5,0); // set the cursor to column 5, line 1
+     lcd.print(" ON at ");
+     lcd.setCursor(12,0); // set the cursor to column 12, line 1
+     lcd.print(int(requiredtemp+1));
+     lcd.print("\337"); // The degree symbol is \337
+     lcd.print("C ");
+    }
 
     // Check if any reads failed and exit early (to try again).
     if (isnan(t))
@@ -195,7 +215,8 @@ void loop(){
        time_15sec = millis();
        //print_time(time_15sec);
        time_5min = millis(); // here we reset & freshen up the 5 minutes counter for the HOT Cycle,so we get an accurate 5 minute gap before switching ON the compressor.
-      
+       // time_millis=millis(); // grab the current time when the AIRCON switched OFF here in the COLD CYCLE.
+       countdown=10;
     }
        
   }
@@ -231,15 +252,35 @@ void PressUPButton()
 
 void print_time(unsigned long time_millis)
 {
-    Serial.print("Time: ");
-    Serial.print(time_millis/1000);
-    Serial.print("s - ");
+    if(relayState == 0) // if compressor is ON then display the following:
+    {
+     Serial.print("Time: ");
+     Serial.print(time_millis/1000);
+     Serial.print("s - ");
     
-    lcd.setCursor(0,1); // set the cursor to column 1, line 0
-    lcd.print("Time:");
-    lcd.setCursor(7,1); // set the cursor to column 12, line 0 
-    lcd.print(time_millis/1000);
-    lcd.print("s");
+     //lcd.setCursor(0,1); // set the cursor to column 0, line 1
+     //lcd.print("Time:");
+     lcd.setCursor(0,1); // set the cursor to column 0, line 1 
+     lcd.print(time_millis/1000);
+     lcd.print("s");
+     lcd.setCursor(9,1); // set the cursor to column 0, line 1 
+     lcd.print("        ");
+    }
+
+  if(relayState == 1) // if compressor is OFF then display the following:
+    {
+     Serial.print("Time: ");
+     Serial.print(time_millis/1000);
+     Serial.print("s - ");
+    
+     //lcd.setCursor(0,1); // set the cursor to column 0, line 1
+     //lcd.print("Time:");
+     lcd.setCursor(0,1); // set the cursor to column 0, line 1 
+     lcd.print(time_millis/1000);
+     lcd.print("s");
+     lcd.setCursor(13,1); // set the cursor to column 9, line 1 
+     lcd.print(countdown);
+    }  
     
 }
 
