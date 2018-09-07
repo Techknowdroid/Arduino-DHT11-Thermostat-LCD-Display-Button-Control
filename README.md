@@ -1,2 +1,5 @@
 # Arduino-DHT11-Thermostat-LCD-Display-Button-Control
 DHT11 based thermostat with LCD Display and Button to set desired temperature to switch ON or OFF an Airconditioner by grabbing the room temperature at the start of the cycle. Then cooling the room by 2 degrees or as needed before cutting power to the Aircon. Then waiting for the temperature to rise by a set level before switching ON power to the Aircon again but not before a minimum amount of determined time has elapsed so as to protect the Compressor from damage by preventing early switch on.
+The Button is connected using a 10 uF 63 VDC capacitor and a 10K resistor to prevent bouncing (Hardware debounce).This is explained well here : https://www.youtube.com/watch?v=Y86-t9j6doo   and here : https://www.youtube.com/watch?v=ksNbEuhO4fU  and here : https://eeenthusiast.com/arduino-advanced-input-button-control-debouncing-counters-multitasking/
+The Fritzing diagram is included in this repository for the wiring diagram.(a PNG file named dht11LCDnewWIRING_bb.png).
+Also included here is the fritzing file itself.(dht11LCDnewWIRING.fzz).
