@@ -17,8 +17,8 @@ unsigned long time_5min = 0; // millis() returns an unsigned long.
 unsigned long time_10sec = 0; // millis() returns an unsigned long.
 unsigned long time_10secs = 0; // millis() returns an unsigned long for the time we need to wait before first start of AirCON
 unsigned long secs = 0; // millis() returns an unsigned long for the time we need to wait before first start of AirCON
-unsigned long countdown=0; // countdown variable for the print_time function.
-
+unsigned long countdown=10; // countdown variable for the print_time function.
+//unsigned long countdown2=10; // countdown2 variable for the print_time function.
 
 void print_time(unsigned long time_millis);  // function declaration.
 
@@ -278,7 +278,7 @@ void print_time(unsigned long time_millis)
      lcd.setCursor(0,1); // set the cursor to column 0, line 1 
      lcd.print(time_millis/1000);
      lcd.print("s");
-     lcd.setCursor(13,1); // set the cursor to column 9, line 1 
+     lcd.setCursor(11,1); // set the cursor to column 9, line 1 
      lcd.print(countdown);
     }  
     
