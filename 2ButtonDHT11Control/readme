@@ -1,0 +1,14 @@
+This DHT11lcdTESTnewPROGRAM2buttonREMOTE2.ino sketch has the added functionality of being able to use an infra red Remote control,
+(in this case the DENON RC-981 remote), to be able to control the thermostat's cutoff temperature by raising it or reducing it by
+pressing certain keys on the remote.
+
+The AirCON compressor can be force started also, by pressing a certain key on the remote.
+
+To get the values for the (infra red) Denon RC-981 Remote controller or any other TV's infra red remote control,
+you can use the IRremote Ken Shirriff Library from https://github.com/z3t0/Arduino-IRremote
+
+For some help on using infra red remote controllers in your arduino projects, you can check out this website : 
+https://howtomechatronics.com/tutorials/arduino/control-any-electronics-with-a-tv-remote-arduino-ir-tutorial/
+
+or this one :
+https://www.maxphi.com/ir-remote-control-decoder-using-arduino
